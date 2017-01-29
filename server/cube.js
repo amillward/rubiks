@@ -56,6 +56,7 @@ module.exports = function Cube() {
         var face = this.sides[side];
         var colour = face.name;
         this.faces[face.name] = [[colour, colour, colour], [colour, colour, colour], [colour, colour, colour]];
+        this.faces[face.name] = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
       };
     },
 
@@ -82,13 +83,19 @@ module.exports = function Cube() {
     getNorth: function(face) {
       return this.faces[face][0];
     },
+    getCenterHorizontal: function(face) {
+      return this.faces[face][1];
+    },
     getSouth: function(face) {
       return this.faces[face][2];
     },
-    getEast: function(face) {
+    getWest: function(face) {
       return [this.faces[face][0][0], this.faces[face][1][0], this.faces[face][2][0]];
     },
-    getWest: function(face) {
+    getCenterVertical: function(face) {
+      return [this.faces[face][0][1], this.faces[face][1][1], this.faces[face][2][1]];
+    },
+    getEast: function(face) {
       return [this.faces[face][0][2], this.faces[face][1][2], this.faces[face][2][2]];
     },
 
@@ -260,23 +267,45 @@ module.exports = function Cube() {
     },
 
     toString: function() {
-      for(var i=0; i<this.faces.y.length; i++) {
-        console.log('                        |---|---|---|');
-        console.log('                        |', this.faces.y[i].join(' | '), '|');
+      var longString = '';
+      for(var i=this.faces.y.length-1; i>-1; i--) {
+        longString = longString.concat('                        |---|---|---|\n');
+        longString = longString.concat('                        | ', this.faces.y[i].reverse().join(' | '), ' |\n');
       }
-      console.log('|---|---|---|---|---|---|---|---|---|---|---|---|');
-      for(var i=0; i<3; i++){
-        console.log('|',this.faces.o[i].join(' | '),'|',this.faces.b[i].join(' | '),'|',this.faces.r[i].join(' | '),'|',this.faces.g[i].join(' | '),'|');
-        console.log('|---|---|---|---|---|---|---|---|---|---|---|---|');
-      }
-      for(var i=0; i<this.faces.w.length; i++) {
-        console.log('                        |', this.faces.w[i].join(' | '), '|');
-        console.log('                        |---|---|---|');
-      }
+
+
+
+      longString = longString.concat('|---|---|---|---|---|---|---|---|---|---|---|---|\n');
+      longString = longString.concat('| ',this.getEast('o').join(' | '));
+      longString = longString.concat(' | ',this.getSouth('b').reverse().join(' | '));
+      longString = longString.concat(' | ',this.getNorth('r').join(' | '));
+      longString = longString.concat(' | ',this.getWest('g').reverse().join(' | ') ,' |\n');
+      longString = longString.concat('|---|---|---|---|---|---|---|---|---|---|---|---|\n');
+
+      longString = longString.concat('| ',this.getCenterVertical('o').join(' | '));
+      longString = longString.concat(' | ',this.getCenterHorizontal('b').reverse().join(' | '));
+      longString = longString.concat(' | ',this.getCenterHorizontal('r').join(' | '));
+      longString = longString.concat(' | ',this.getCenterVertical('g').reverse().join(' | ') ,' |\n');
+      longString = longString.concat('|---|---|---|---|---|---|---|---|---|---|---|---|\n');
+
+      longString = longString.concat('| ',this.getWest('o').join(' | '));
+      longString = longString.concat(' | ',this.getNorth('b').reverse().join(' | '));
+      longString = longString.concat(' | ',this.getSouth('r').join(' | '));
+      longString = longString.concat(' | ',this.getEast('g').reverse().join(' | ') ,' |\n');
+      longString = longString.concat('|---|---|---|---|---|---|---|---|---|---|---|---|\n');
+
+      longString = longString.concat('                        | ', this.getEast('w').join(' | '), ' |\n');
+      longString = longString.concat('                        |---|---|---|\n');
+      longString = longString.concat('                        | ', this.getCenterVertical('w').join(' | '), ' |\n');
+      longString = longString.concat('                        |---|---|---|\n');
+      longString = longString.concat('                        | ', this.getWest('w').join(' | '), ' |\n');
+      longString = longString.concat('                        |---|---|---|\n');
+
+      console.log(longString);
     }
   }
-}
 
+}
 /*
                         |---|---|---|
                         | ▼ | ▼ | ▼ |

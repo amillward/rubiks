@@ -9,17 +9,17 @@ module.exports = function Cube() {
     sides: {
       y: {
         name: 'y',
-        north: 'o',
-        south: 'r',
-        east: 'g',
-        west: 'b'
+        north: 'r',
+        south: 'o',
+        east: 'b',
+        west: 'g'
       },
       w: {
         name: 'w',
-        north: 'r',
-        south: 'o',
-        east: 'g',
-        west: 'b'
+        north: 'b',
+        south: 'g',
+        east: 'r',
+        west: 'o'
       },
       r: {
         name: 'r',
@@ -30,24 +30,24 @@ module.exports = function Cube() {
       },
       o: {
         name: 'o',
-        north: 'y',
-        south: 'w',
-        east: 'b',
-        west: 'g'
+        north: 'g',
+        south: 'b',
+        east: 'y',
+        west: 'w'
       },
       g: {
         name: 'g',
-        north: 'y',
-        south: 'w',
-        east: 'o',
-        west: 'r'
+        north: 'o',
+        south: 'r',
+        east: 'w',
+        west: 'y'
       },
       b: {
         name: 'b',
-        north: 'y',
-        south: 'o',
-        east: 'r',
-        west: 'o'
+        north: 'w',
+        south: 'y',
+        east: 'o',
+        west: 'r'
       }
     },
 
@@ -56,7 +56,8 @@ module.exports = function Cube() {
         var face = this.sides[side];
         var colour = face.name;
         this.faces[face.name] = [[colour, colour, colour], [colour, colour, colour], [colour, colour, colour]];
-        this.faces[face.name] = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+        // this.faces[face.name] = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+        // this.faces[face.name] = [[colour+1, colour+2, colour+3], [colour+4, colour+5, colour+6], [colour+7, colour+8, colour+9]];
       };
     },
 
@@ -67,36 +68,57 @@ module.exports = function Cube() {
       return _.flatten(this.getFace(face)).join('');
     },
 
-    getCol: function(face, dir) {
+    getCol: function(face, dir, faces) {
+      if(!faces) {
+        faces = this.faces
+      }
       switch(dir) {
         case 'east':
-          return this.getWest(face);
+          return this.getEast(face, faces);
         case 'west':
-          return this.getEast(face);
+          return this.getWest(face, faces);
         case 'north':
-          return this.getNorth(face);
+          return this.getNorth(face, faces);
         case 'south':
-          return this.getSouth(face);
+          return this.getSouth(face, faces);
       }
     },
 
-    getNorth: function(face) {
-      return this.faces[face][0];
+    getNorth: function(face, faces) {
+      if(!faces) {
+        faces = this.faces
+      }
+      return faces[face][0];
     },
-    getCenterHorizontal: function(face) {
-      return this.faces[face][1];
+    getCenterHorizontal: function(face, faces) {
+      if(!faces) {
+        faces = this.faces
+      }
+      return faces[face][1];
     },
-    getSouth: function(face) {
-      return this.faces[face][2];
+    getSouth: function(face, faces) {
+      if(!faces) {
+        faces = this.faces
+      }
+      return faces[face][2];
     },
-    getWest: function(face) {
-      return [this.faces[face][0][0], this.faces[face][1][0], this.faces[face][2][0]];
+    getWest: function(face, faces) {
+      if(!faces) {
+        faces = this.faces
+      }
+      return [faces[face][0][0], faces[face][1][0], faces[face][2][0]];
     },
-    getCenterVertical: function(face) {
-      return [this.faces[face][0][1], this.faces[face][1][1], this.faces[face][2][1]];
+    getCenterVertical: function(face, faces) {
+      if(!faces) {
+        faces = this.faces
+      }
+      return [faces[face][0][1], faces[face][1][1], faces[face][2][1]];
     },
-    getEast: function(face) {
-      return [this.faces[face][0][2], this.faces[face][1][2], this.faces[face][2][2]];
+    getEast: function(face, faces) {
+      if(!faces) {
+        faces = this.faces
+      }
+      return [faces[face][0][2], faces[face][1][2], faces[face][2][2]];
     },
 
     setNorth: function(face, vals) {
@@ -109,14 +131,14 @@ module.exports = function Cube() {
       this.faces[face][2] = vals;
       return stash;
     },
-    setEast: function(face, vals) {
+    setWest: function(face, vals) {
       var stash = this.getEast(face);
       this.faces[face][0][0] = vals[0];
       this.faces[face][1][0] = vals[1];
       this.faces[face][2][0] = vals[2];
       return stash;
     },
-    setWest: function(face, vals) {
+    setEast: function(face, vals) {
       var stash = this.getWest(face);
       this.faces[face][0][2] = vals[0];
       this.faces[face][1][2] = vals[1];
@@ -125,12 +147,12 @@ module.exports = function Cube() {
     },
 
     change: function(face, direction, vals) {
-      console.log('change', face, direction, vals);
+      // console.log('Face changing:', face, 'Direction:', direction, 'to be', vals);
       switch(direction) {
         case 'east':
-          return this.setWest(face, vals);
-        case 'west':
           return this.setEast(face, vals);
+        case 'west':
+          return this.setWest(face, vals);
         case 'north':
           return this.setNorth(face, vals);
         case 'south':
@@ -138,168 +160,79 @@ module.exports = function Cube() {
       }
     },
 
-    turn: function(face) {
-      console.log('\n\nTurn',face);
-      var side = this.sides[face];
-      var north = this.sides[side.north];
-      var south = this.sides[side.south];
-      var east = this.sides[side.east];
-      var west = this.sides[side.west];
-
-      // Turn yellow by red - set (south) of it's north to be east of it's west
-      // Turn yellow by green - set (east) of it's north to be east of it's west
-      // Turn yellow by orange - set (north) of it's north to be east of it's west
-      // Turn yellow by blue - set (west) of it's north to be east of it's west
-
-      // Change north
-      var direction;
-      for(dir in north) {
-        if(north[dir] == side.name) {
-          direction = dir;
-          break;
-        }
-      }
-      var col;
-      for(dir in side) {
-        if(side[dir] == north.name) {
-          col = dir;
-          break;
-        }
-      }
-      var stash1 = this.change(north.name, direction, this.getCol(west.name, col));
-
-      // Change east
-
-      // Turn green by red - set (west) of it's east to south of it's north
-      var direction;
-      for(dir in east) {
-        if(east[dir] == side.name) {
-          direction = dir;
-          break;
-        }
-      }
-      var col;
-      for(dir in side) {
-        if(side[dir] == east.name) {
-          direction = dir;
-          break;
-        }
-      }
-      var stash2 = this.change(east.name, direction, stash1);
-
-      // Change south
-      var direction;
-      for(dir in south) {
-        if(south[dir] == side.name) {
-          direction = dir;
-          break;
-        }
-      }
-      stash1 = this.change(south.name, direction, stash2);
-
-      // Change west
-      var direction;
-      for(dir in west) {
-        if(west[dir] == side.name) {
-          direction = dir;
-          break;
-        }
-      }
-      this.change(west.name, direction, stash1);
-
+    rotate: function(face) {
+      var f = this.faces[face];
+      var newFace = [
+        [f[2][0], f[1][0], f[0][0]],
+        [f[2][1], f[1][1], f[0][1]],
+        [f[2][2], f[1][2], f[0][2]]
+      ];
+      this.faces[face] = newFace;
     },
 
-    turnOld: function(face) {
-      console.log('\n\nTurn',face);
+    turn: function(face) {
+      var stash = JSON.parse(JSON.stringify(this.faces));
       var side = this.sides[face];
       var north = this.sides[side.north];
       var south = this.sides[side.south];
       var east = this.sides[side.east];
       var west = this.sides[side.west];
 
-      // Turn yellow by red - set (south) of it's north to be east of it's west
-      // Turn yellow by green - set (east) of it's north to be east of it's west
-      // Turn yellow by orange - set (north) of it's north to be east of it's west
-      // Turn yellow by blue - set (west) of it's north to be east of it's west
+      // FOR ALL POSSIBLE TURNS OF YELLOW
+      // Turn yellow by red - set (north) of it's (north) to be (west) of it's (west) nnww
+      // Turn yellow by green - set (west) of it's (west) to be (east) of it's (south) wwes
+      // Turn yellow by orange - set (south) of it's (east) to be (north) of it's (north) senn
+      // Turn yellow by blue - set (east) of it's (south) to be (south) of it's (east)    esse
 
-      // Change north
-      var direction;
-      for(dir in north) {
-        if(north[dir] == side.name) {
-          direction = dir;
-          break;
-        }
-      }
-      var stash1 = this.change(north.name, direction, this.getEast(west.name));
+      // FOR ALL MOVES ON ONE YELLOW TURN
+      // Turn red by yellow - set (N) of it's (N) to be (W) of it's (W) NNWW
+      // Turn blue by yellow - set (S) of it's (E) to be (N) of it's (N) SENN
+      // Turn orange by yellow - set (E) of it's (S) to be (S) of it's (E) ESSE
+      // Turn green by yellow - set (W) of it's (W) to be (E) of it's (S) WWES
+      // Rotate yellow
 
-      // Change east
+      this.change(north.name, 'north', this.getCol(west.name, 'west', stash).slice().reverse());
+      this.change(east.name, 'south', this.getCol(north.name, 'north', stash));
+      this.change(south.name, 'east', this.getCol(east.name, 'south', stash).slice().reverse());
+      this.change(west.name, 'west', this.getCol(south.name, 'east', stash));
 
-      // Turn green by red - set (west) of it's east to south of it's north
-      var direction;
-      for(dir in east) {
-        if(east[dir] == side.name) {
-          direction = dir;
-          break;
-        }
-      }
-      var stash2 = this.change(east.name, direction, stash1);
-
-      // Change south
-      var direction;
-      for(dir in south) {
-        if(south[dir] == side.name) {
-          direction = dir;
-          break;
-        }
-      }
-      stash1 = this.change(south.name, direction, stash2);
-
-      // Change west
-      var direction;
-      for(dir in west) {
-        if(west[dir] == side.name) {
-          direction = dir;
-          break;
-        }
-      }
-      this.change(west.name, direction, stash1);
-
+      this.rotate(side.name);
     },
 
     toString: function() {
-      var longString = '';
+      var longString = '                          ||===|===|===||\n';
       for(var i=this.faces.y.length-1; i>-1; i--) {
-        longString = longString.concat('                        |---|---|---|\n');
-        longString = longString.concat('                        | ', this.faces.y[i].reverse().join(' | '), ' |\n');
+        if(i!=this.faces.y.length-1){
+          longString = longString.concat('                          ||---|---|---||\n');
+        }
+        longString = longString.concat('                          || ', this.faces.y[i].slice().reverse().join(' | '), ' ||\n');
       }
 
+      longString = longString.concat('||===|===|===||===|===|===||===|===|===||===|===|===||\n');
+      longString = longString.concat('|| ',this.getEast('o').join(' | '));
+      longString = longString.concat(' || ',this.getSouth('b').slice().reverse().join(' | '));
+      longString = longString.concat(' || ',this.getNorth('r').join(' | '));
+      longString = longString.concat(' || ',this.getWest('g').slice().reverse().join(' | ') ,' ||\n');
+      longString = longString.concat('||---|---|---||---|---|---||---|---|---||---|---|---||\n');
 
+      longString = longString.concat('|| ',this.getCenterVertical('o').join(' | '));
+      longString = longString.concat(' || ',this.getCenterHorizontal('b').slice().reverse().join(' | '));
+      longString = longString.concat(' || ',this.getCenterHorizontal('r').join(' | '));
+      longString = longString.concat(' || ',this.getCenterVertical('g').slice().reverse().join(' | ') ,' ||\n');
+      longString = longString.concat('||---|---|---||---|---|---||---|---|---||---|---|---||\n');
 
-      longString = longString.concat('|---|---|---|---|---|---|---|---|---|---|---|---|\n');
-      longString = longString.concat('| ',this.getEast('o').join(' | '));
-      longString = longString.concat(' | ',this.getSouth('b').reverse().join(' | '));
-      longString = longString.concat(' | ',this.getNorth('r').join(' | '));
-      longString = longString.concat(' | ',this.getWest('g').reverse().join(' | ') ,' |\n');
-      longString = longString.concat('|---|---|---|---|---|---|---|---|---|---|---|---|\n');
+      longString = longString.concat('|| ',this.getWest('o').join(' | '));
+      longString = longString.concat(' || ',this.getNorth('b').slice().reverse().join(' | '));
+      longString = longString.concat(' || ',this.getSouth('r').join(' | '));
+      longString = longString.concat(' || ',this.getEast('g').slice().reverse().join(' | ') ,' ||\n');
+      longString = longString.concat('||===|===|===||===|===|===||===|===|===||===|===|===||\n');
 
-      longString = longString.concat('| ',this.getCenterVertical('o').join(' | '));
-      longString = longString.concat(' | ',this.getCenterHorizontal('b').reverse().join(' | '));
-      longString = longString.concat(' | ',this.getCenterHorizontal('r').join(' | '));
-      longString = longString.concat(' | ',this.getCenterVertical('g').reverse().join(' | ') ,' |\n');
-      longString = longString.concat('|---|---|---|---|---|---|---|---|---|---|---|---|\n');
-
-      longString = longString.concat('| ',this.getWest('o').join(' | '));
-      longString = longString.concat(' | ',this.getNorth('b').reverse().join(' | '));
-      longString = longString.concat(' | ',this.getSouth('r').join(' | '));
-      longString = longString.concat(' | ',this.getEast('g').reverse().join(' | ') ,' |\n');
-      longString = longString.concat('|---|---|---|---|---|---|---|---|---|---|---|---|\n');
-
-      longString = longString.concat('                        | ', this.getEast('w').join(' | '), ' |\n');
-      longString = longString.concat('                        |---|---|---|\n');
-      longString = longString.concat('                        | ', this.getCenterVertical('w').join(' | '), ' |\n');
-      longString = longString.concat('                        |---|---|---|\n');
-      longString = longString.concat('                        | ', this.getWest('w').join(' | '), ' |\n');
-      longString = longString.concat('                        |---|---|---|\n');
+      longString = longString.concat('                          || ', this.getEast('w').join(' | '), ' ||\n');
+      longString = longString.concat('                          ||---|---|---||\n');
+      longString = longString.concat('                          || ', this.getCenterVertical('w').join(' | '), ' ||\n');
+      longString = longString.concat('                          ||---|---|---||\n');
+      longString = longString.concat('                          || ', this.getWest('w').join(' | '), ' ||\n');
+      longString = longString.concat('                          ||===|===|===||\n');
 
       console.log(longString);
     }

@@ -191,7 +191,7 @@ module.exports = function Cube() {
       // Turn green by yellow - set (W) of it's (W) to be (E) of it's (S) WWES
       // Rotate yellow
 
-      this.change(north.name, 'north', this.getCol(west.name, 'west', stash).slice().reverse());
+      this.change(north.name, 'north', this.getCol(west.name, 'west', stash).slice().reverse()); // FIXME these reverses are wrong. The reverse should be decided by the orientation of the face
       this.change(east.name, 'south', this.getCol(north.name, 'north', stash));
       this.change(south.name, 'east', this.getCol(east.name, 'south', stash).slice().reverse());
       this.change(west.name, 'west', this.getCol(south.name, 'east', stash));

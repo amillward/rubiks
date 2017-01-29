@@ -129,5 +129,22 @@ describe('Cube', function() {
       });
     });
 
+    describe('multi multi-face turns', function(){
+      it('yellow red', function() {
+        cube.turn('y');
+        cube.turn('r');
+        cube.turn('w');
+        cube.turn('r');
+        cube.turn('g');
+
+        assert.equal(cube.getFaceString('y'), 'gworyyryy');
+        assert.equal(cube.getFaceString('w'), 'wwrwwyboy');
+        assert.equal(cube.getFaceString('r'), 'brybrgwgo');
+        assert.equal(cube.getFaceString('o'), 'yywgobgob');
+        assert.equal(cube.getFaceString('g'), 'boobggrrg');
+        assert.equal(cube.getFaceString('b'), 'goowbbwrr');
+      });
+    });
+
   });
 });

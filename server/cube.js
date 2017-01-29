@@ -1,6 +1,15 @@
 var _ = require('underscore');
 var colors = require('colors/safe');
 
+colors.setTheme({
+  y: ['yellow', 'bold'],
+  w: ['white', 'bold'],
+  r: ['red', 'bold'],
+  o: ['magenta', 'bold'],
+  b: ['blue', 'bold'],
+  g: ['green', 'bold'],
+});
+
 module.exports = function Cube() {
 
   return {
@@ -203,7 +212,6 @@ module.exports = function Cube() {
     },
 
     toString: function() {
-      var lookup = {y:'yellow', w: 'white', o: 'magenta', r: 'red', b: 'blue', g: 'green'};
       console.log('                          ||===|===|===||');
       for(var i=this.faces.y.length-1; i>-1; i--) {
         if(i!=this.faces.y.length-1){
@@ -211,9 +219,9 @@ module.exports = function Cube() {
         }
         var arr1 = this.faces.y[i].slice().reverse()
         console.log('                          ||',
-          colors[lookup[arr1[0]]](arr1[0]), '|',
-          colors[lookup[arr1[1]]](arr1[1]), '|',
-          colors[lookup[arr1[1]]](arr1[2]),
+          colors[arr1[0]](arr1[0]), '|',
+          colors[arr1[1]](arr1[1]), '|',
+          colors[arr1[2]](arr1[2]),
           '||');
       }
       
@@ -225,18 +233,18 @@ module.exports = function Cube() {
       var arr3 = this.getNorth('r');
       var arr4 = this.getWest('g').slice().reverse();
       console.log('||',
-        colors[lookup[arr1[0]]](arr1[0]), '|',
-        colors[lookup[arr1[1]]](arr1[1]), '|',
-        colors[lookup[arr1[2]]](arr1[2]), '||',
-        colors[lookup[arr2[0]]](arr2[0]), '|',
-        colors[lookup[arr2[1]]](arr2[1]), '|',
-        colors[lookup[arr2[2]]](arr2[2]), '||',
-        colors[lookup[arr3[0]]](arr3[0]), '|',
-        colors[lookup[arr3[1]]](arr3[1]), '|',
-        colors[lookup[arr3[2]]](arr3[2]), '||',
-        colors[lookup[arr4[0]]](arr4[0]), '|',
-        colors[lookup[arr4[1]]](arr4[1]), '|',
-        colors[lookup[arr4[2]]](arr4[2]), '||'
+        colors[arr1[0]](arr1[0]), '|',
+        colors[arr1[1]](arr1[1]), '|',
+        colors[arr1[2]](arr1[2]), '||',
+        colors[arr2[0]](arr2[0]), '|',
+        colors[arr2[1]](arr2[1]), '|',
+        colors[arr2[2]](arr2[2]), '||',
+        colors[arr3[0]](arr3[0]), '|',
+        colors[arr3[1]](arr3[1]), '|',
+        colors[arr3[2]](arr3[2]), '||',
+        colors[arr4[0]](arr4[0]), '|',
+        colors[arr4[1]](arr4[1]), '|',
+        colors[arr4[2]](arr4[2]), '||'
       );
 
       console.log('||---|---|---||---|---|---||---|---|---||---|---|---||');
@@ -245,18 +253,18 @@ module.exports = function Cube() {
       arr3 = this.getCenterHorizontal('r');
       arr4 = this.getCenterVertical('g').slice().reverse();
       console.log('||',
-        colors[lookup[arr1[0]]](arr1[0]), '|',
-        colors[lookup[arr1[1]]](arr1[1]), '|',
-        colors[lookup[arr1[2]]](arr1[2]), '||',
-        colors[lookup[arr2[0]]](arr2[0]), '|',
-        colors[lookup[arr2[1]]](arr2[1]), '|',
-        colors[lookup[arr2[2]]](arr2[2]), '||',
-        colors[lookup[arr3[0]]](arr3[0]), '|',
-        colors[lookup[arr3[1]]](arr3[1]), '|',
-        colors[lookup[arr3[2]]](arr3[2]), '||',
-        colors[lookup[arr4[0]]](arr4[0]), '|',
-        colors[lookup[arr4[1]]](arr4[1]), '|',
-        colors[lookup[arr4[2]]](arr4[2]), '||'
+        colors[arr1[0]](arr1[0]), '|',
+        colors[arr1[1]](arr1[1]), '|',
+        colors[arr1[2]](arr1[2]), '||',
+        colors[arr2[0]](arr2[0]), '|',
+        colors[arr2[1]](arr2[1]), '|',
+        colors[arr2[2]](arr2[2]), '||',
+        colors[arr3[0]](arr3[0]), '|',
+        colors[arr3[1]](arr3[1]), '|',
+        colors[arr3[2]](arr3[2]), '||',
+        colors[arr4[0]](arr4[0]), '|',
+        colors[arr4[1]](arr4[1]), '|',
+        colors[arr4[2]](arr4[2]), '||'
       );
 
       console.log('||---|---|---||---|---|---||---|---|---||---|---|---||');
@@ -265,40 +273,40 @@ module.exports = function Cube() {
       arr3 = this.getSouth('r');
       arr4 = this.getEast('g').slice().reverse();
       console.log('||',
-        colors[lookup[arr1[0]]](arr1[0]), '|',
-        colors[lookup[arr1[1]]](arr1[1]), '|',
-        colors[lookup[arr1[2]]](arr1[2]), '||',
-        colors[lookup[arr2[0]]](arr2[0]), '|',
-        colors[lookup[arr2[1]]](arr2[1]), '|',
-        colors[lookup[arr2[2]]](arr2[2]), '||',
-        colors[lookup[arr3[0]]](arr3[0]), '|',
-        colors[lookup[arr3[1]]](arr3[1]), '|',
-        colors[lookup[arr3[2]]](arr3[2]), '||',
-        colors[lookup[arr4[0]]](arr4[0]), '|',
-        colors[lookup[arr4[1]]](arr4[1]), '|',
-        colors[lookup[arr4[2]]](arr4[2]), '||'
+        colors[arr1[0]](arr1[0]), '|',
+        colors[arr1[1]](arr1[1]), '|',
+        colors[arr1[2]](arr1[2]), '||',
+        colors[arr2[0]](arr2[0]), '|',
+        colors[arr2[1]](arr2[1]), '|',
+        colors[arr2[2]](arr2[2]), '||',
+        colors[arr3[0]](arr3[0]), '|',
+        colors[arr3[1]](arr3[1]), '|',
+        colors[arr3[2]](arr3[2]), '||',
+        colors[arr4[0]](arr4[0]), '|',
+        colors[arr4[1]](arr4[1]), '|',
+        colors[arr4[2]](arr4[2]), '||'
       );
 
       console.log('||===|===|===||===|===|===||===|===|===||===|===|===||');
       arr1 = this.getEast('w');
       console.log('                          ||',
-        colors[lookup[arr1[0]]](arr1[0]), '|',
-        colors[lookup[arr1[1]]](arr1[1]), '|',
-        colors[lookup[arr1[2]]](arr1[2]),
+        colors[arr1[0]](arr1[0]), '|',
+        colors[arr1[1]](arr1[1]), '|',
+        colors[arr1[2]](arr1[2]),
         '||');
       console.log('                          ||---|---|---||');
       arr1 = this.getCenterVertical('w');
       console.log('                          ||',
-        colors[lookup[arr1[0]]](arr1[0]), '|',
-        colors[lookup[arr1[1]]](arr1[1]), '|',
-        colors[lookup[arr1[2]]](arr1[2]),
+        colors[arr1[0]](arr1[0]), '|',
+        colors[arr1[1]](arr1[1]), '|',
+        colors[arr1[2]](arr1[2]),
         '||');
       console.log('                          ||---|---|---||');
       arr1 = this.getWest('w');
       console.log('                          ||',
-        colors[lookup[arr1[0]]](arr1[0]), '|',
-        colors[lookup[arr1[1]]](arr1[1]), '|',
-        colors[lookup[arr1[2]]](arr1[2]),
+        colors[arr1[0]](arr1[0]), '|',
+        colors[arr1[1]](arr1[1]), '|',
+        colors[arr1[2]](arr1[2]),
         '||');
       console.log('                          ||===|===|===||');
     }

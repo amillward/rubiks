@@ -1,4 +1,5 @@
 var _ = require('underscore');
+var colors = require('colors/safe');
 
 module.exports = function Cube() {
 
@@ -202,41 +203,104 @@ module.exports = function Cube() {
     },
 
     toString: function() {
-      var longString = '                          ||===|===|===||\n';
+      var lookup = {y:'yellow', w: 'white', o: 'magenta', r: 'red', b: 'blue', g: 'green'};
+      console.log('                          ||===|===|===||');
       for(var i=this.faces.y.length-1; i>-1; i--) {
         if(i!=this.faces.y.length-1){
-          longString = longString.concat('                          ||---|---|---||\n');
+          console.log('                          ||---|---|---||');
         }
-        longString = longString.concat('                          || ', this.faces.y[i].slice().reverse().join(' | '), ' ||\n');
+        var arr1 = this.faces.y[i].slice().reverse()
+        console.log('                          ||',
+          colors[lookup[arr1[0]]](arr1[0]), '|',
+          colors[lookup[arr1[1]]](arr1[1]), '|',
+          colors[lookup[arr1[1]]](arr1[2]),
+          '||');
       }
+      
 
-      longString = longString.concat('||===|===|===||===|===|===||===|===|===||===|===|===||\n');
-      longString = longString.concat('|| ',this.getEast('o').join(' | '));
-      longString = longString.concat(' || ',this.getSouth('b').slice().reverse().join(' | '));
-      longString = longString.concat(' || ',this.getNorth('r').join(' | '));
-      longString = longString.concat(' || ',this.getWest('g').slice().reverse().join(' | ') ,' ||\n');
-      longString = longString.concat('||---|---|---||---|---|---||---|---|---||---|---|---||\n');
+      var longString = '';
+      console.log('||===|===|===||===|===|===||===|===|===||===|===|===||');
+      arr1 = this.getEast('o');
+      var arr2 = this.getSouth('b').slice().reverse();
+      var arr3 = this.getNorth('r');
+      var arr4 = this.getWest('g').slice().reverse();
+      console.log('||',
+        colors[lookup[arr1[0]]](arr1[0]), '|',
+        colors[lookup[arr1[1]]](arr1[1]), '|',
+        colors[lookup[arr1[2]]](arr1[2]), '||',
+        colors[lookup[arr2[0]]](arr2[0]), '|',
+        colors[lookup[arr2[1]]](arr2[1]), '|',
+        colors[lookup[arr2[2]]](arr2[2]), '||',
+        colors[lookup[arr3[0]]](arr3[0]), '|',
+        colors[lookup[arr3[1]]](arr3[1]), '|',
+        colors[lookup[arr3[2]]](arr3[2]), '||',
+        colors[lookup[arr4[0]]](arr4[0]), '|',
+        colors[lookup[arr4[1]]](arr4[1]), '|',
+        colors[lookup[arr4[2]]](arr4[2]), '||'
+      );
 
-      longString = longString.concat('|| ',this.getCenterVertical('o').join(' | '));
-      longString = longString.concat(' || ',this.getCenterHorizontal('b').slice().reverse().join(' | '));
-      longString = longString.concat(' || ',this.getCenterHorizontal('r').join(' | '));
-      longString = longString.concat(' || ',this.getCenterVertical('g').slice().reverse().join(' | ') ,' ||\n');
-      longString = longString.concat('||---|---|---||---|---|---||---|---|---||---|---|---||\n');
+      console.log('||---|---|---||---|---|---||---|---|---||---|---|---||');
+      arr1 = this.getCenterVertical('o');
+      arr2 = this.getCenterHorizontal('b').slice().reverse();
+      arr3 = this.getCenterHorizontal('r');
+      arr4 = this.getCenterVertical('g').slice().reverse();
+      console.log('||',
+        colors[lookup[arr1[0]]](arr1[0]), '|',
+        colors[lookup[arr1[1]]](arr1[1]), '|',
+        colors[lookup[arr1[2]]](arr1[2]), '||',
+        colors[lookup[arr2[0]]](arr2[0]), '|',
+        colors[lookup[arr2[1]]](arr2[1]), '|',
+        colors[lookup[arr2[2]]](arr2[2]), '||',
+        colors[lookup[arr3[0]]](arr3[0]), '|',
+        colors[lookup[arr3[1]]](arr3[1]), '|',
+        colors[lookup[arr3[2]]](arr3[2]), '||',
+        colors[lookup[arr4[0]]](arr4[0]), '|',
+        colors[lookup[arr4[1]]](arr4[1]), '|',
+        colors[lookup[arr4[2]]](arr4[2]), '||'
+      );
 
-      longString = longString.concat('|| ',this.getWest('o').join(' | '));
-      longString = longString.concat(' || ',this.getNorth('b').slice().reverse().join(' | '));
-      longString = longString.concat(' || ',this.getSouth('r').join(' | '));
-      longString = longString.concat(' || ',this.getEast('g').slice().reverse().join(' | ') ,' ||\n');
-      longString = longString.concat('||===|===|===||===|===|===||===|===|===||===|===|===||\n');
+      console.log('||---|---|---||---|---|---||---|---|---||---|---|---||');
+      arr1 = this.getWest('o');
+      arr2 = this.getNorth('b').slice().reverse();
+      arr3 = this.getSouth('r');
+      arr4 = this.getEast('g').slice().reverse();
+      console.log('||',
+        colors[lookup[arr1[0]]](arr1[0]), '|',
+        colors[lookup[arr1[1]]](arr1[1]), '|',
+        colors[lookup[arr1[2]]](arr1[2]), '||',
+        colors[lookup[arr2[0]]](arr2[0]), '|',
+        colors[lookup[arr2[1]]](arr2[1]), '|',
+        colors[lookup[arr2[2]]](arr2[2]), '||',
+        colors[lookup[arr3[0]]](arr3[0]), '|',
+        colors[lookup[arr3[1]]](arr3[1]), '|',
+        colors[lookup[arr3[2]]](arr3[2]), '||',
+        colors[lookup[arr4[0]]](arr4[0]), '|',
+        colors[lookup[arr4[1]]](arr4[1]), '|',
+        colors[lookup[arr4[2]]](arr4[2]), '||'
+      );
 
-      longString = longString.concat('                          || ', this.getEast('w').join(' | '), ' ||\n');
-      longString = longString.concat('                          ||---|---|---||\n');
-      longString = longString.concat('                          || ', this.getCenterVertical('w').join(' | '), ' ||\n');
-      longString = longString.concat('                          ||---|---|---||\n');
-      longString = longString.concat('                          || ', this.getWest('w').join(' | '), ' ||\n');
-      longString = longString.concat('                          ||===|===|===||\n');
-
-      console.log(longString);
+      console.log('||===|===|===||===|===|===||===|===|===||===|===|===||');
+      arr1 = this.getEast('w');
+      console.log('                          ||',
+        colors[lookup[arr1[0]]](arr1[0]), '|',
+        colors[lookup[arr1[1]]](arr1[1]), '|',
+        colors[lookup[arr1[2]]](arr1[2]),
+        '||');
+      console.log('                          ||---|---|---||');
+      arr1 = this.getCenterVertical('w');
+      console.log('                          ||',
+        colors[lookup[arr1[0]]](arr1[0]), '|',
+        colors[lookup[arr1[1]]](arr1[1]), '|',
+        colors[lookup[arr1[2]]](arr1[2]),
+        '||');
+      console.log('                          ||---|---|---||');
+      arr1 = this.getWest('w');
+      console.log('                          ||',
+        colors[lookup[arr1[0]]](arr1[0]), '|',
+        colors[lookup[arr1[1]]](arr1[1]), '|',
+        colors[lookup[arr1[2]]](arr1[2]),
+        '||');
+      console.log('                          ||===|===|===||');
     }
   }
 

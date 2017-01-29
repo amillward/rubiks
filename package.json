@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.1.2",
     "prompt": "^1.0.0",
     "underscore": "^1.8.3"
   },

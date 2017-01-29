@@ -1,5 +1,7 @@
 # rubiks
 
+Simple program that will mimic rubiks cube turns in the command line
+
 ## Quick start
 
     npm i

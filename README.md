@@ -15,3 +15,7 @@ When prompted, use letters below to rotate corresponding face:
     g: green
 
 Send any other character into the prompt to quit
+
+## Run tests
+
+    npm test

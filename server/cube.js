@@ -51,13 +51,15 @@ module.exports = function Cube() {
       }
     },
 
-    getSolvedCube: function() {
+    getSolvedCube: function(numbers) {
       for(side in this.sides){
         var face = this.sides[side];
         var colour = face.name;
-        this.faces[face.name] = [[colour, colour, colour], [colour, colour, colour], [colour, colour, colour]];
-        // this.faces[face.name] = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
-        // this.faces[face.name] = [[colour+1, colour+2, colour+3], [colour+4, colour+5, colour+6], [colour+7, colour+8, colour+9]];
+        if(numbers) {
+          this.faces[face.name] = [[colour+1, colour+2, colour+3], [colour+4, colour+5, colour+6], [colour+7, colour+8, colour+9]];
+        } else {
+          this.faces[face.name] = [[colour, colour, colour], [colour, colour, colour], [colour, colour, colour]];
+        }
       };
     },
 
@@ -147,7 +149,7 @@ module.exports = function Cube() {
     },
 
     change: function(face, direction, vals) {
-      // console.log('Face changing:', face, 'Direction:', direction, 'to be', vals);
+      vals = vals.slice().reverse();
       switch(direction) {
         case 'east':
           return this.setEast(face, vals);
@@ -185,15 +187,15 @@ module.exports = function Cube() {
       // Turn yellow by blue - set (east) of it's (south) to be (south) of it's (east)    esse
 
       // FOR ALL MOVES ON ONE YELLOW TURN
-      // Turn red by yellow - set (N) of it's (N) to be (W) of it's (W) NNWW
-      // Turn blue by yellow - set (S) of it's (E) to be (N) of it's (N) SENN
-      // Turn orange by yellow - set (E) of it's (S) to be (S) of it's (E) ESSE
-      // Turn green by yellow - set (W) of it's (W) to be (E) of it's (S) WWES
+      // Turn red by yellow - set (N) of it's (N) to be (W) of it's (W) R
+      // Turn blue by yellow - set (S) of it's (E) to be (N) of it's (N) R
+      // Turn orange by yellow - set (E) of it's (S) to be (S) of it's (E) R
+      // Turn green by yellow - set (W) of it's (W) to be (E) of it's (S) 
       // Rotate yellow
 
-      this.change(north.name, 'north', this.getCol(west.name, 'west', stash).slice().reverse()); // FIXME these reverses are wrong. The reverse should be decided by the orientation of the face
+      this.change(north.name, 'north', this.getCol(west.name, 'west', stash));
       this.change(east.name, 'south', this.getCol(north.name, 'north', stash));
-      this.change(south.name, 'east', this.getCol(east.name, 'south', stash).slice().reverse());
+      this.change(south.name, 'east', this.getCol(east.name, 'south', stash));
       this.change(west.name, 'west', this.getCol(south.name, 'east', stash));
 
       this.rotate(side.name);

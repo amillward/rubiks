@@ -132,6 +132,21 @@ describe('Cube', function() {
     describe('multi multi-face turns', function(){
       it('yellow red', function() {
         cube.turn('y');
+        cube.turn('g');
+        cube.turn('o');
+
+        assert.equal(cube.getFaceString('y'), 'ryyryyooo');
+        assert.equal(cube.getFaceString('w'), 'rwwbwwboo');
+        assert.equal(cube.getFaceString('r'), 'ggwrrwrrw');
+        assert.equal(cube.getFaceString('o'), 'ooyooybby');
+        assert.equal(cube.getFaceString('g'), 'bwwgggggg');
+        assert.equal(cube.getFaceString('b'), 'bbybbyrrg');
+      });
+    });
+
+    describe('multi multi-face turns', function(){
+      it('yellow red', function() {
+        cube.turn('y');
         cube.turn('r');
         cube.turn('w');
         cube.turn('r');

@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var colors = require('colors/safe');
+var randomstring = require('randomstring');
 
 colors.setTheme({
   y: ['yellow', 'bold'],
@@ -209,6 +210,94 @@ module.exports = function Cube() {
       this.change(west.name, 'west', this.getCol(south.name, 'east', stash));
 
       this.rotate(side.name);
+    },
+
+    scramble: function() {
+      var turns = randomstring.generate({
+        charset: Object.keys(this.sides).join(''),
+        length: 40
+      });
+      for (var i = 0, len = turns.length; i < len; i++) {
+        this.turn(turns[i]);
+      }
+    },
+
+    cross: function() {
+      // Solve red
+      this.solveCrossEdge('r','w');
+      this.solveCrossEdge('o','w');
+      this.solveCrossEdge('b','w');
+      this.solveCrossEdge('g','w');
+    },
+
+    solveCrossEdge: function(c1, c2) {
+      // FIXME this does not yet fix mistakes it makes
+      var count = 0;
+      while((this.findEdgePiece(c1, c2).f!=c1 || this.findEdgePiece(c2, c1).f!=c2)) {
+        count++;
+        var locRW = this.findEdgePiece(c1, c2);
+        var locWR = this.findEdgePiece(c2, c1);
+        if(locRW.f == c1) {
+          if(locWR.f!=c2) {
+            this.turn(locRW.f);
+          }
+        } else {
+          var opposite = this.sides[this.sides[c1].north].south;
+          if(locWR.f==opposite || locWR.f==c1) {
+            this.turn(locRW.f);
+          }else{
+            this.turn(locWR.f);
+          }
+        }
+        if(count>40) {
+          console.log('too many loops');
+          break;
+        }
+      }
+    },
+
+    findEdgePiece: function(c1, c2) {
+      for(f in this.faces) {
+        var face = this.faces[f];
+        for(var x=0; x<face.length; x++) {
+          for(var y=0; y<face[x].length; y++) {
+            if(face[x][y] == c1) {
+              var side = this.sides[f];
+              var adjacent, dir;
+
+              if(x==1 && y==0) {
+                // Left center
+                dir = 'west';
+                var west = this.sides[side[dir]];
+                adjacent = this.getCol(west.name, 'west')[1];
+              } else if(x==0 && y==1) {
+                // Top center
+                dir = 'north';
+                var north = this.sides[side[dir]];
+                adjacent = this.getCol(north.name, 'north')[1];
+              } else if(x==2 && y==1) {
+                // Bottom center
+                dir = 'south';
+                var south = this.sides[side[dir]];
+                adjacent = this.getCol(south.name, 'east')[1];
+              } else if(x==1 && y==2) {
+                // right center
+                dir = 'east';
+                var east = this.sides[side[dir]];
+                adjacent = this.getCol(east.name, 'south')[1];
+              }
+
+              if(adjacent == c2) {
+                return {f:f, x:x, y:y, dir: dir}
+              }
+            }
+          }
+        }
+      }
+    },
+
+    solve: function() {
+      this.getSolvedCube();
     },
 
     toString: function() {

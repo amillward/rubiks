@@ -6,6 +6,7 @@
     npm start
 
 When prompted, use letters below to rotate corresponding face:
+
     y: yellow
     w: white
     r: red

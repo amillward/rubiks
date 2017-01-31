@@ -17,6 +17,8 @@ module.exports = function Cube() {
 
     faces: {},
 
+    turnTrack: [],
+
     sides: {
       y: {
         name: 'y',
@@ -183,7 +185,7 @@ module.exports = function Cube() {
       this.faces[face] = newFace;
     },
 
-    turn: function(face) {
+    turn: function(face, print) {
       var stash = JSON.parse(JSON.stringify(this.faces));
       var side = this.sides[face];
       var north = this.sides[side.north];
@@ -210,6 +212,11 @@ module.exports = function Cube() {
       this.change(west.name, 'west', this.getCol(south.name, 'east', stash));
 
       this.rotate(side.name);
+
+      if(print) {
+        this.toString();
+      }
+      this.turnTrack.push(face);
     },
 
     scramble: function() {
@@ -222,46 +229,139 @@ module.exports = function Cube() {
       }
     },
 
-    cross: function() {
-      // Solve red
-      this.solveCrossEdge('r','w');
-      this.solveCrossEdge('o','w');
-      this.solveCrossEdge('b','w');
-      this.solveCrossEdge('g','w');
+    cross: function(f) {
+      if(!f) f = 'w'
+
+      var face = this.sides[f];
+
+      this.turnTrack = [];
+
+      this.solveCrossEdge(f, face.north);
+      this.solveCrossEdge(f, face.south);
+      this.solveCrossEdge(f, face.east);
+      this.solveCrossEdge(f, face.west);
+
+      console.log('Total turns:', this.turnTrack.length, this.turnTrack.join(','));
     },
 
     solveCrossEdge: function(c1, c2) {
-      // FIXME this does not yet fix mistakes it makes
-      var count = 0;
-      while((this.findEdgePiece(c1, c2).f!=c1 || this.findEdgePiece(c2, c1).f!=c2)) {
-        count++;
-        var locRW = this.findEdgePiece(c1, c2);
-        var locWR = this.findEdgePiece(c2, c1);
-        if(locRW.f == c1) {
-          if(locWR.f!=c2) {
-            this.turn(locRW.f);
-          }
-        } else {
-          var opposite = this.sides[this.sides[c1].north].south;
-          if(locWR.f==opposite || locWR.f==c1) {
-            this.turn(locRW.f);
-          }else{
-            this.turn(locWR.f);
-          }
+      var locRW = this.findEdgePiece(c2, c1);
+      var locWR = this.findEdgePiece(c1, c2);
+      var oppositeR = this.sides[this.sides[c2].north].south;
+      var oppositeW = this.sides[this.sides[c1].north].south;
+
+      // There are 6 cases for the position of the edge piece in relation to it's target
+      if(locWR.f == c1 && locRW.f == c2) {
+        // Solved
+        console.log('solved');
+      } else if(locWR.f == oppositeW) {
+        // Top up
+        console.log('top up');
+
+        // Turn Y to align c2 to its centre
+        while(locRW.f != c2) {
+          this.turn(oppositeW);
+          locRW = this.findEdgePiece(c2, c1);
         }
-        if(count>40) {
-          console.log('too many loops');
-          break;
+
+        // Turn c2 twice
+        this.turn(c2);
+        this.turn(c2);
+
+      } else if (locRW.f == oppositeW) {
+        // Top out
+        console.log('top out');
+
+        // Turn y to align w to c2's face
+        var east = this.sides[this.sides[this.sides[c2].north].south];
+        while(locWR.f != c2) {
+          this.turn(oppositeW);
+          locWR = this.findEdgePiece(c1, c2);
+        }
+
+        // Turn once more
+        this.turn(oppositeW);
+        locWR = this.findEdgePiece(c1, c2);
+
+        var west = this.sides[locWR.f];
+
+        // Turn west
+        this.turn(west.name);
+
+        // Turn c2
+        this.turn(c2);
+        this.turn(c2);
+        this.turn(c2);
+        this.turnTrack = this.turnTrack.slice(0, this.turnTrack.length - 2); // Until we can turn anticlockwise
+
+        // Turn west' to repair
+        this.turn(west.name);
+        this.turn(west.name);
+        this.turn(west.name);
+        this.turnTrack = this.turnTrack.slice(0, this.turnTrack.length - 2); // Until we can turn anticlockwise
+
+      } else if (locRW.f == c1) {
+        // Bottom out
+        console.log('bottom out');
+
+        // Turn face of whites side twice
+        this.turn(locWR.f);
+        this.turn(locWR.f);
+
+        // Do top out alg
+        this.solveCrossEdge(c1, c2);
+
+      } else if (locWR.f == c1) {
+        // Bottom down
+        console.log('bottom down');
+
+        //Turn face of c2's side twice
+        this.turn(locRW.f);
+        this.turn(locRW.f);
+
+        // Do top-up alg
+        this.solveCrossEdge(c1, c2);
+
+      } else {
+        // Middle
+        console.log('middle');
+
+        // Turn c2's side so w is on face y (may be prime or not)
+        var correction = locRW.f;
+        var count = 0;
+        while(locWR.f != oppositeW) {
+          count++;
+          this.turn(locRW.f);
+          locWR = this.findEdgePiece(c1, c2);
+        }
+
+        // Turn Y to align c2 to its centre
+        while(locRW.f != c2) {
+          this.turn(oppositeW);
+          locRW = this.findEdgePiece(c2, c1);
+        }
+
+        // Turn c2 twice
+        this.turn(c2);
+        this.turn(c2);
+
+        // Unturn first face to repair
+        console.log('correct', c1, correction);
+        var correctionTurns = 3*count;
+        correctionCount = correction % 4;
+        for (var i=0; i<correctionCount; i++) {
+          this.turn(correction);
         }
       }
+      console.log('turn progress:', this.turnTrack.length, this.turnTrack.join(','));
     },
 
-    findEdgePiece: function(c1, c2) {
+    findEdgePiece: function(c2, c1) {
       for(f in this.faces) {
         var face = this.faces[f];
         for(var x=0; x<face.length; x++) {
           for(var y=0; y<face[x].length; y++) {
-            if(face[x][y] == c1) {
+            if(face[x][y] == c2) {
               var side = this.sides[f];
               var adjacent, dir;
 
@@ -287,7 +387,7 @@ module.exports = function Cube() {
                 adjacent = this.getCol(east.name, 'south')[1];
               }
 
-              if(adjacent == c2) {
+              if(adjacent == c1) {
                 return {f:f, x:x, y:y, dir: dir}
               }
             }

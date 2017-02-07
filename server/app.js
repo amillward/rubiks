@@ -1,8 +1,9 @@
 var prompt = require('prompt');
 var Cube = require('./cube');
+var Solver = require('./solver');
 
 var myCube = new Cube();
-myCube.getSolvedCube();
+myCube.reset();
 myCube.toString();
 
 prompt.start();
@@ -76,12 +77,13 @@ var doTurn = function() {
       case 'print':
         break;
 
-      case 'solve':
-        myCube.solve();
+      case 'reset':
+        myCube.reset();
         break;
 
-      case 'cross':
-        myCube.cross();
+      case 'solve':
+        solver = new Solver();
+        solver.solve(myCube);
         break;
 
       case 'help':

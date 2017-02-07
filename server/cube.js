@@ -11,11 +11,13 @@ colors.setTheme({
   g: ['green', 'bold'],
 });
 
-module.exports = function Cube() {
+module.exports = function Cube(copyFaces) {
+  
+  faces = copyFaces ? _.extend({},copyFaces) : {};
 
   return {
 
-    faces: {},
+    faces: faces,
 
     turnTrack: [],
 

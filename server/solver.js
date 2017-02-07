@@ -1,8 +1,10 @@
+var Cube = require('./cube');
 module.exports = function Solver() {
 
   return {
     solve: function(cube) {
-      this.solveCross(cube, 'w');
+      this.scoreTurns(cube);
+      // this.solveCross(cube, 'w');
     },
 
     solveCross: function(cube, f) {
@@ -18,6 +20,48 @@ module.exports = function Solver() {
       this.solveCrossEdge(cube, f, face.west);
 
       console.log('Total turns:', cube.turnTrack.length, cube.turnTrack.join(','));
+    },
+
+    getPoints: function(cube, c1, c2) {
+      var locRW = cube.findEdgePiece(c2, c1);
+      var locWR = cube.findEdgePiece(c1, c2);
+      console.log(locRW, locWR, c1, c2, cube.faces);
+      var oppositeR = cube.sides[cube.sides[c2].north].south;
+      var oppositeW = cube.sides[cube.sides[c1].north].south;
+
+      if(locWR.f == c1 && locRW.f == c2) {
+        // Solved
+        return 0;
+      } else if(locWR.f == oppositeW) {
+        // Top up
+        return 2;
+      } else if (locRW.f == oppositeW) {
+        // Top out
+        return 3;
+      } else if (locRW.f == c1) {
+        // Bottom out
+        return 4;
+      } else if (locWR.f == c1) {
+        // Bottom down
+        return 3;
+      } else {
+        // Middle
+        return 4;
+      }
+    },
+
+    scoreTurns: function(cube) {
+      var face = cube.faces;
+      var scores = {};
+      for(side in cube.sides) {
+        var copy = new Cube(face);
+        copy.turn(side);
+
+        var points = 0;
+        points += this.getPoints(copy, 'w', 'r');
+        scores[side] = points;
+      }
+      console.log('points is', scores);
     },
 
     solveCrossEdge: function(cube, c1, c2) {
@@ -59,7 +103,7 @@ module.exports = function Solver() {
         cube.turn(oppositeW);
         locWR = cube.findEdgePiece(c1, c2);
 
-        var west = this.sides[locWR.f];
+        var west = cube.sides[locWR.f];
 
         // Turn west
         cube.turn(west.name);

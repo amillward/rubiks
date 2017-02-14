@@ -56,19 +56,13 @@ var doTurn = function() {
       case 'o':
       case 'b':
       case 'g':
-        myCube.turn(commands[result.turn]);
-        break;
-
       case 'y\'':
       case 'w\'':
       case 'r\'':
       case 'o\'':
       case 'g\'':
       case 'b\'':
-        var face = commands[commands[result.turn].charAt(0)];
-        myCube.turn(face);
-        myCube.turn(face);
-        myCube.turn(face);
+        myCube.turn(commands[result.turn]);
         break;
 
       case 'scramble':

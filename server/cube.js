@@ -187,38 +187,46 @@ module.exports = function Cube(copyFaces) {
       this.faces[face] = newFace;
     },
 
-    turn: function(face, print) {
-      var stash = JSON.parse(JSON.stringify(this.faces));
-      var side = this.sides[face];
-      var north = this.sides[side.north];
-      var south = this.sides[side.south];
-      var east = this.sides[side.east];
-      var west = this.sides[side.west];
+    turn: function(face, number, print) {
+      this.turnTrack.push(face);
+      if(!number) number = 1;
+      if(face.indexOf('\'') > -1) {
+        face = face.substring(0, 1);
+        number = 3;
+      }
 
-      // FOR ALL POSSIBLE TURNS OF YELLOW
-      // Turn yellow by red - set (north) of it's (north) to be (west) of it's (west) nnww
-      // Turn yellow by green - set (west) of it's (west) to be (east) of it's (south) wwes
-      // Turn yellow by orange - set (south) of it's (east) to be (north) of it's (north) senn
-      // Turn yellow by blue - set (east) of it's (south) to be (south) of it's (east)    esse
+      for(var i=0; i<number; i++) {
+        var stash = JSON.parse(JSON.stringify(this.faces));
+        var side = this.sides[face];
+        var north = this.sides[side.north];
+        var south = this.sides[side.south];
+        var east = this.sides[side.east];
+        var west = this.sides[side.west];
 
-      // FOR ALL MOVES ON ONE YELLOW TURN
-      // Turn red by yellow - set (N) of it's (N) to be (W) of it's (W) R
-      // Turn blue by yellow - set (S) of it's (E) to be (N) of it's (N) R
-      // Turn orange by yellow - set (E) of it's (S) to be (S) of it's (E) R
-      // Turn green by yellow - set (W) of it's (W) to be (E) of it's (S) 
-      // Rotate yellow
+        // FOR ALL POSSIBLE TURNS OF YELLOW
+        // Turn yellow by red - set (north) of it's (north) to be (west) of it's (west) nnww
+        // Turn yellow by green - set (west) of it's (west) to be (east) of it's (south) wwes
+        // Turn yellow by orange - set (south) of it's (east) to be (north) of it's (north) senn
+        // Turn yellow by blue - set (east) of it's (south) to be (south) of it's (east)    esse
 
-      this.change(north.name, 'north', this.getCol(west.name, 'west', stash));
-      this.change(east.name, 'south', this.getCol(north.name, 'north', stash));
-      this.change(south.name, 'east', this.getCol(east.name, 'south', stash));
-      this.change(west.name, 'west', this.getCol(south.name, 'east', stash));
+        // FOR ALL MOVES ON ONE YELLOW TURN
+        // Turn red by yellow - set (N) of it's (N) to be (W) of it's (W) R
+        // Turn blue by yellow - set (S) of it's (E) to be (N) of it's (N) R
+        // Turn orange by yellow - set (E) of it's (S) to be (S) of it's (E) R
+        // Turn green by yellow - set (W) of it's (W) to be (E) of it's (S) 
+        // Rotate yellow
 
-      this.rotate(side.name);
+        this.change(north.name, 'north', this.getCol(west.name, 'west', stash));
+        this.change(east.name, 'south', this.getCol(north.name, 'north', stash));
+        this.change(south.name, 'east', this.getCol(east.name, 'south', stash));
+        this.change(west.name, 'west', this.getCol(south.name, 'east', stash));
+
+        this.rotate(side.name);
+      }
 
       if(print) {
         this.toString();
       }
-      this.turnTrack.push(face);
     },
 
     scramble: function() {
@@ -231,8 +239,28 @@ module.exports = function Cube(copyFaces) {
       }
     },
 
+    isCrossSolved: function(f) {
+      var s = this.getString();
+      var side = this.sides[f];
+      return s[10]+s[12]+s[14]+s[16]+s[25]+s[30]+s[41]+s[46] == side.name+side.name+side.name+side.name+side.east+side.west+side.south+side.north
+    },
+
     isSolved: function() {
-      return this.getString() === 'yyyyyyyyywwwwwwwwwrrrrrrrrrooooooooogggggggggbbbbbbbbb';
+      var solved = '';
+      for(side in this.sides) {
+        for(i=0; i<6;i++) {
+          solved+= side;
+        }
+      }
+      return this.getString() === solved;
+    },
+
+    isSpinning: function() {
+      var last4 = this.turnTrack.slice(-5);
+      if(last4.length == 5) {
+        return last4.every( (val, i, arr) => val == last4[0] );
+      }
+      return false;
     },
 
     reset: function(numbers) {
@@ -411,7 +439,6 @@ module.exports = function Cube(copyFaces) {
                         |---|---|---|
                         | ◄ | ◄ | ◄ |
                         |---|---|---|
-
 
                         |---|---|---|
                         | y | y | y |

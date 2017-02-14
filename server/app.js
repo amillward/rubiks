@@ -42,6 +42,7 @@ var commands = {
   p: 'print',
   solve: 'solve',
   cross: 'cross',
+  reset: 'reset',
   c: 'cross'
 }
 

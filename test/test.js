@@ -9,7 +9,20 @@ describe('Cube', function() {
 
     beforeEach(function() {
       cube = new Cube();
-      cube.getSolvedCube();
+      cube.reset();
+    });
+
+    describe('Copy', function() {
+      it('doesnt change original', function() {
+        var copy = new Cube(cube.faces);
+        assert.equal(cube.getString(), copy.getString());
+        copy.turn('w');
+        assert.notEqual(cube.getString(), copy.getString());
+        copy.turn('w');
+        copy.turn('w');
+        copy.turn('w');
+        assert.equal(cube.getString(), copy.getString());
+      })
     });
 
     describe('single face turns', function() {

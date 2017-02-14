@@ -13,7 +13,12 @@ colors.setTheme({
 
 module.exports = function Cube(copyFaces) {
   
-  faces = copyFaces ? _.extend({},copyFaces) : {};
+  faces = {};
+  if(copyFaces) {
+    for (copyF in copyFaces) {
+      faces[copyF] = JSON.parse(JSON.stringify(copyFaces[copyF]));
+    }
+  }
 
   return {
 
@@ -71,6 +76,13 @@ module.exports = function Cube(copyFaces) {
     },
     getFaceString: function(face) {
       return _.flatten(this.getFace(face)).join('');
+    },
+    getString: function() {
+      var s = '';
+      for (f in this.faces) {
+        s += this.getFaceString(f);
+      }
+      return s;
     },
 
     getCol: function(face, dir, faces) {
@@ -219,6 +231,10 @@ module.exports = function Cube(copyFaces) {
       }
     },
 
+    isSolved: function() {
+      return this.getString() === 'yyyyyyyyywwwwwwwwwrrrrrrrrrooooooooogggggggggbbbbbbbbb';
+    },
+
     reset: function(numbers) {
       for(side in this.sides){
         var face = this.sides[side];
@@ -269,6 +285,8 @@ module.exports = function Cube(copyFaces) {
           }
         }
       }
+      console.log('Couldont find',c1, c2);
+      this.toString();
     },
 
     toString: function() {
